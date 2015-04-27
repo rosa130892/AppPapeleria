@@ -20,7 +20,7 @@ $(document).ready(function inicio(){
   var des=$("#descripcion").val();
     $.ajax({
     type:"POST",
-    url:"insertar.php",
+    url:"http://rosaisc.260mb.net/insertar.php",
     data:"nombre= "+nom+" &marca= "+ mar +" &precio= "+ pre +" &descripcion= "+ des + " ",
     success: registro
     });
@@ -53,7 +53,7 @@ $(document).ready(function inicio(){
   var valConsulta=$("#valConsulta").val();
     $.ajax({
       type:"POST",
-      url:"buscar.php",
+      url:"http://rosaisc.260mb.net/buscar.php",
       data:"Id="+valConsulta,
       success: ConsultaProducto
     });
@@ -70,7 +70,7 @@ var btnConsAct=$("#btnConsAct");
   btnConsAct.click(function CargarDatos(){  
     $.ajax({
     type:"POST",
-    url:"consultar.php",
+    url:"http://rosaisc.260mb.net/consultar.php",
     data:"",
     success: cargarDatos
     });
@@ -88,7 +88,7 @@ var btnConsAct=$("#btnConsAct");
   var Id=parseInt($("#nomActualizar").val());
     $.ajax({
     type:"POST",
-    url:"buscar.php",
+    url:"http://rosaisc.260mb.net/buscar.php",
     data:"Id="+Id,
     success: cargarDatosAct
     });
@@ -132,7 +132,7 @@ var btnConsAct=$("#btnConsAct");
       }else{
 	$.ajax({
 	  type:"POST",
-	  url:"actualizar.php",
+	  url:"http://rosaisc.260mb.net/actualizar.php",
 	  data:" id= "+id+" &nombre="+nombre+" &marca= "+marca+" &precio= "+precio+" &descripcion= "+descripcion,
 	  success: actualizacion
 	});
@@ -148,7 +148,7 @@ var btnConsAct=$("#btnConsAct");
    btnConsEliminar.click(function EliminarRegistro(){
     $.ajax({
     type:"POST",
-    url:"consultar.php",
+    url:"http://rosaisc.260mb.net/consultar.php",
     data:"",
     success: cargarDatosElim
     });
@@ -166,7 +166,7 @@ var btnConsAct=$("#btnConsAct");
        var IdEliminar=parseInt($("#IdEliminar").val());
       $.ajax({
     type:"POST",
-    url:"eliminar.php",
+    url:"http://rosaisc.260mb.net/eliminar.php",
     data:"Id="+IdEliminar,
     success: Eliminacion
     });
