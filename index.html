@@ -1,0 +1,282 @@
+<!DOCTYPE html-->
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css" />
+<link rel="stylesheet" href="css/jquery-ui.css" />
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery-ui.js"></script>
+<script src="js/jquery.mobile-1.4.5.min.js"></script>
+<title>Aplicación Móvil</title>
+<script type="text/javascript">
+$(document).ready(function inicio(){
+
+// Es esta parte se insertar los datos a la base de datos
+  var btnGuardar=$("#guardar");
+  btnGuardar.click(function guardar(){
+  var nom=$("#nombre").val();
+  var mar=$("#marca").val();
+  var pre=parseInt($("#precio").val());
+  var des=$("#descripcion").val();
+    $.ajax({
+    type:"POST",
+    url:"insertar.php",
+    data:"nombre= "+nom+" &marca= "+ mar +" &precio= "+ pre +" &descripcion= "+ des + " ",
+    success: registro
+    });
+    
+    function registro(datos){
+    alert(datos);
+    }
+  });
+  
+
+  function dibujarTabla(respuesta, respDatos){
+  respuesta.html("");
+    respuesta.append('<table id="tab" border="1">');
+    var tabla=$("#tab");
+    tabla.html("<tr><th>ID</th><th>Nombre</th><th>Marca</th><th>Precio</th><th>Descripcion</th></tr>");
+    for(var i in respDatos){
+      tabla.append("<tr><td>"+respDatos[i].id+"</td>"
+      +"<td>"+respDatos[i].nombre+"</td>"
+      +"<td>"+respDatos[i].marca+"</td>"
+      +"<td>"+respDatos[i].precio+"</td>"
+      +"<td>"+respDatos[i].descripcion+"</td></tr>");
+    }
+    tabla.append("</table>");
+  }
+  
+  
+// Es esta parte se buscan los datos a la base de datos
+ var consultar2=$("#btnconsultar");
+  consultar2.click(function ProductoBuscar(){
+  var valConsulta=$("#valConsulta").val();
+    $.ajax({
+      type:"POST",
+      url:"buscar.php",
+      data:"Id="+valConsulta,
+      success: ConsultaProducto
+    });
+    
+    function ConsultaProducto(datos){
+    var respDatos2=$.parseJSON(datos);   
+    var respuesta2=$("#resbuscar");
+    dibujarTabla(respuesta2, respDatos2);
+    }
+  });
+  
+  
+var btnConsAct=$("#btnConsAct");
+  btnConsAct.click(function CargarDatos(){  
+    $.ajax({
+    type:"POST",
+    url:"consultar.php",
+    data:"",
+    success: cargarDatos
+    });
+    
+    function cargarDatos(datos){   
+      var respCarga=$.parseJSON(datos);       
+      var respConAct=$("#respConAct");      
+      dibujarTabla(respConAct,respCarga);
+    }
+  });
+  
+
+  var btnCarDatos=$("#btnCarDatos");
+  btnCarDatos.click(function CargarInformacion(){
+  var Id=parseInt($("#nomActualizar").val());
+    $.ajax({
+    type:"POST",
+    url:"buscar.php",
+    data:"Id="+Id,
+    success: cargarDatosAct
+    });
+    
+    
+    //Es esta parte se cargan los datos que se van a eliminar
+     function cargarDatosAct(datos){
+      var consDatAct=$.parseJSON(datos);
+      var respCargDatos=$("#respCargDatos");//Div del resultado para dibujar controles
+      respCargDatos.html("<label>ID:</label><input type='text' id='Id' disabled='yes'>");
+      respCargDatos.append("<label>Nombre:</label><input type='text' id='nom'>");
+      respCargDatos.append("<label>Marca:</label><input type='text' id='mar'>");
+      respCargDatos.append("<label>Precio:</label><input type='text' id='pre'>");
+         respCargDatos.append("<label>Descripción:</label><input type='text' id='des'>");
+      var Id=$("#Id");
+      var nom=$("#nom");
+      var mar=$("#mar");
+      var pre=$("#pre");
+       var des=$("#des");
+      for(var i in consDatAct){
+	Id.val(consDatAct[i].id);
+	nom.val(consDatAct[i].nombre);
+	mar.val(consDatAct[i].marca);
+	pre.val(consDatAct[i].precio);
+        des.val(consDatAct[i].descripcion);
+      }
+    }
+  });
+  
+   // Boton consulta para actualizar datos de la tabla
+    var btnGuarDatos=$("#btnGuarDatos");
+      btnGuarDatos.click(function actualizar(){
+      var id=parseInt($("#Id").val());
+      var nombre=$("#nom").val();
+      var marca=$("#mar").val();
+      var precio=$("#pre").val();
+      var descripcion=$("#des").val();
+
+      if(nombre=="" || marca=="" || precio=="" || descripcion=="" ){
+	alert("Ingresa información en todos los campos");
+      }else{
+	$.ajax({
+	  type:"POST",
+	  url:"actualizar.php",
+	  data:" id= "+id+" &nombre="+nombre+" &marca= "+marca+" &precio= "+precio+" &descripcion= "+descripcion,
+	  success: actualizacion
+	});
+		
+      }   
+      function actualizacion(datos){
+	  alert("Datos Modificados: "+datos);
+	}
+   });
+   
+   
+    var btnConsEliminar=$("#btnConsEliminar"); // Boton consunta para eliminar
+   btnConsEliminar.click(function EliminarRegistro(){
+    $.ajax({
+    type:"POST",
+    url:"consultar.php",
+    data:"",
+    success: cargarDatosElim
+    });
+    
+    function cargarDatosElim(datos){   
+      var respCarga=$.parseJSON(datos);       
+      var respConAct=$("#respConElim");      
+      dibujarTabla(respConAct,respCarga);
+    }
+   });
+   
+   
+    var btnEliminar=$("#btnEliminar");
+   btnEliminar.click(function eliminarProducto(){
+       var IdEliminar=parseInt($("#IdEliminar").val());
+      $.ajax({
+    type:"POST",
+    url:"eliminar.php",
+    data:"Id="+IdEliminar,
+    success: Eliminacion
+    });
+    
+    function Eliminacion(datos){   
+      alert(datos);
+    }  
+   });
+   
+});
+</script>
+<style type="text/css">
+p{
+text-align:center;
+}
+</style>
+</head>
+<body>
+<div data-role="page" id="principal">
+  <div data-role="header" >
+    <p>Datos de Papeleria Flores</p>
+  </div>
+  <div data-role="content">
+    <div>
+      <ul data-role="listview">
+	<li><a href="#registro" >Registrar producto</a></li>
+	<li><a href="#buscar" >Buscar producto</a></li>
+	<li><a href="#actualizar" >Actualizar producto</a></li>
+        <li><a href="#eliminar" >Eliminar registro de producto</a></li>
+      </ul>
+    </div>
+  </div>
+  <div data-role="footer">
+  <p>Derechos reservados</p>
+  </div>
+</div>
+    
+    <!-- Insertar datos en una base de datos-->
+<div data-role="page" id="registro">
+  <div data-role="header" >
+    <p>Resgistrar Productos</p>
+       <a href="#principal" data-role="button" data-transition="slide" data-add-back-btn="true" data-icon="home">Regresar</a>
+  </div>
+  <div data-role="content">
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre">
+    <label for="marca">Marca:</label>
+    <input type="text" id="marca">
+    <label for="precio">Precio:</label>
+    <input type="text" id="precio">
+    <label for="descripcion">Descripciòn:</label>
+    <input type="text" id="descripcion">
+    <input type="button" id="guardar" value="Guardar">
+  </div>
+  <div data-role="footer">
+  <p>Derechos reservados</p>
+  </div>
+</div>
+        <!-- Buscar datos en una base de datos-->
+   <div data-role="page" id="buscar">
+  <div data-role="header" >
+    <p>Consultar Productos</p>
+       <a href="#principal" data-role="button" data-transition="slide" data-add-back-btn="true" data-icon="home">Regresar</a>
+  </div>
+  <div data-role="content">
+    <label for="valConsulta">Id Producto:</label>
+    <input type="text" id="valConsulta" >
+    <input type="button" id="btnconsultar" value="Buscar">
+    <div id="resbuscar"></div>
+  </div>
+  <div data-role="footer">
+  <p>Derechos reservados</p>
+</div>
+</div>
+
+<div data-role="page" id="actualizar">
+  <div data-role="header" >
+    <p>Actualizar registros</p>
+     <a href="#principal" data-role="button" data-transition="slide" data-add-back-btn="true" data-icon="home">Regresar</a>
+  </div>
+  <div data-role="content">
+    <input type="button" id="btnConsAct" value="Mostrar todos los registros de productos">
+    <div id="respConAct"></div>
+    <label for="nomActualizar">ID a actualizar</label>
+    <input type="text" id="nomActualizar" >
+    <input type="button" id="btnCarDatos" value="Cargar Datos">
+    <div id="respCargDatos"></div>
+    <input type="button" id="btnGuarDatos" value="Guardar Datos">
+  </div>
+  <div data-role="footer">
+  <p>Derechos reservados</p>
+  </div>
+</div>
+    
+        
+     <div data-role="page" id="eliminar">
+  <div data-role="header" >
+    <p>Eliminar registros de productos</p>
+     <a href="#principal" data-role="button" data-transition="slide" data-add-back-btn="true" data-icon="home">Regresar</a>
+  </div>
+  <div data-role="content">
+    <input type="button" id="btnConsEliminar" value="Mostrar todos los registros">
+    <div id="respConElim"></div>
+    <label for="IdEliminar">ID a actualizar</label>
+    <input type="text" id="IdEliminar" >    
+    <input type="button" id="btnEliminar" value="Eliminar Datos">
+  </div>
+  <div data-role="footer">
+  <p>Derechos reservados</p>
+  </div>
+</div>    
+</body>
+</html>
